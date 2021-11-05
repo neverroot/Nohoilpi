@@ -1,6 +1,4 @@
 from bs4 import BeautifulSoup
-import requests
-import re
 import os
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -8,7 +6,6 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import pickle
-import datetime
 import util
 
 try:
@@ -16,26 +13,33 @@ try:
 except ImportError:
     from urlparse import urlparse
 
-NUM_OF_WEEKS = 17
+NUM_OF_WEEKS = 18
 
 class Schedule():
     def __init__(self, games):
         self.games = games
-        self.get_weeks()
+        # makes each week an attribute ex. schedule.week_1
+        self.__dict__.update(self.get_weeks())
 
     def get_weeks(self):
         weeks = {f'week_{i+1}':[] for i in range(NUM_OF_WEEKS)}
-        #weeks = [ {f'week_{i}':[]} for i in range(NUM_OF_WEEKS)]
         for game in self.games:
             weeks[f'week_{game.week_num}'].append(game)
-        print(weeks)
+        return weeks
 
+    def print_list_of_games(self, lgames):
+        for i,game in enumerate(lgames):
+            print(f"[-] Game {i} - {game} | {util.get_dt_string(game.gt_dt)}")
+            
     def week(self, n):
-        return [g for g in self.games if int(g.week_num) == n]
+        return getattr(self,f"week_{n}")
 
     def get_curr_week_num(self):
-        curr = util.get_curr_dt
-        return n
+        curr = util.get_curr_dt()
+        for i in range(NUM_OF_WEEKS):
+            last_game_of_week = getattr(self,f"week_{i+1}")[-1]
+            if last_game_of_week.gt_dt > curr:
+                return int(last_game_of_week.week_num)
 
 class TeamData():
     def __init__(self, data):
@@ -225,6 +229,11 @@ class Scraper():
                 row_data[col['data-stat']] = col.text
             for col in row.find_all("td"):
                 row_data[col['data-stat']] = col.text
+                # combine date and time to get the game's dt
+                if 'game_date' in row_data and 'gametime' in row_data:
+                    gt = f"{row_data['game_date']} {row_data['gametime']}"
+                    gt_dt = util.get_dt(gt)
+                    row_data["gt_dt"] = gt_dt
                 # see if there is an aref
                 try:
                     a = col.find_all("a")

@@ -4,6 +4,7 @@ from analyzer import Analzyer
 import os
 import time
 
+CURRENT_WEEK = 0
 class Nohoilpi():
     def __init__(self, always_update=False):
         self.always_update = always_update
@@ -15,13 +16,16 @@ class Nohoilpi():
         self.scraper.initialize()
         self.NFL_TEAMS = self.scraper.teams
 
+    def print_games(self,lgames):
+        self.schedule.print_list_of_games(lgames)
+
     # get the games of nth week
     # if n=0 get current week
     def get_games_of_week(self,n):
         assert(self.schedule)
         if n==0:
-
-            self.schedule.week()
+            return self.schedule.week(self.schedule.get_curr_week_num())
+        return self.schedule.week(n)
 
     # get the week number of the given matchup (a vs b)
     def get_week_of_matchup(self, a, b, n=0):

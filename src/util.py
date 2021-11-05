@@ -15,5 +15,8 @@ def get_curr_dt():
     print("[-] Today's date {}".format(curr.strftime("%Y-%m-%d %I:%M%p")))
     return curr
 
+def get_dt_string(dt):
+    return dt.strftime("%Y-%m-%d %I:%M%p")
+
 def check_caches(dn):
     pass
