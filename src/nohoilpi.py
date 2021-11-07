@@ -55,14 +55,14 @@ class Nohoilpi():
         return all_res
 
     def analzye_teams_last_game(self, full_name, n):
-        games_of_last_week = self.schedule.week(n)
+        assert(self.schedule)
+        games_of_last_week = getattr(self,f"week_{n}")
         for game in games_of_last_week:
             if full_name == game.winner or full_name == game.loser:
-                self.analyze_matchup(game.winner, game.loser)
+                self.analyze_game(game.winner, game.loser)
 
     # analyze the matchup of a vs b on nth week
-    def analyze_matchup(self, a, b, n):
-        n = self.get_matchup_week(a,b)
+    def analyze_game(self, a, b):
         last_a_game = self.analzye_teams_last_game(a,n-1)
         last_b_game = self.analzye_teams_last_game(b,n-1)
         matchup_stats = self.analzyer.matchup(a,b,last_a_game,last_b_game)
