@@ -12,7 +12,7 @@ def get_dt(date_time):
 
 def get_curr_dt():
     curr = datetime.datetime.now()
-    print("[-] Today's date {}".format(curr.strftime("%Y-%m-%d %I:%M%p")))
+    print("[-] Today's date: {}".format(curr.strftime("%Y-%m-%d %I:%M%p")))
     return curr
 
 def get_dt_string(dt):

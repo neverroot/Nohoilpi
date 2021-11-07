@@ -12,3 +12,4 @@ gambler.get_schedule()
 this_weeks_games = gambler.get_games_of_week(CURRENT_WEEK)
 gambler.print_games(this_weeks_games)
 
+game = this_weeks_games[1]

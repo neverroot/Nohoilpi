@@ -1,5 +1,4 @@
 from scraper import Scraper, Schedule
-#import scraper
 from analyzer import Analzyer
 import os
 import time
@@ -46,6 +45,7 @@ class Nohoilpi():
 
     def get_schedule(self):
         self.schedule = self.scraper.scrape_schedule()
+        self.__dict__.update(self.schedule.__dict__)
     
     def analyze_week(self, n):
         games_of_week = self.schedule.week(n)

@@ -15,6 +15,7 @@ except ImportError:
 
 NUM_OF_WEEKS = 18
 
+
 class Schedule():
     def __init__(self, games):
         self.games = games
@@ -28,9 +29,12 @@ class Schedule():
         return weeks
 
     def print_list_of_games(self, lgames):
+        print(f"[-] Games for Week {lgames[0].week_num}")
+        print(f"[-] {'='*75}")
         for i,game in enumerate(lgames):
-            print(f"[-] Game {i} - {game} | {util.get_dt_string(game.gt_dt)}")
-            
+            print(f"[-] Game {i+1} - {game} | {util.get_dt_string(game.gt_dt)}")
+        print(f"[-] {'='*75}")
+
     def week(self, n):
         return getattr(self,f"week_{n}")
 
@@ -40,6 +44,7 @@ class Schedule():
             last_game_of_week = getattr(self,f"week_{i+1}")[-1]
             if last_game_of_week.gt_dt > curr:
                 return int(last_game_of_week.week_num)
+
 
 class TeamData():
     def __init__(self, data):
@@ -57,6 +62,9 @@ class GameData():
 GET_FULL_NAME  = 0
 GET_TEAM_URL   = 1
 GET_SHORT_NAME = 2
+
+NUM_OF_TEAMS = 32
+
 class Scraper():
     def __init__(self, always_update=False):
         self.always_update = always_update
@@ -80,6 +88,29 @@ class Scraper():
                 return t[GET_SHORT_NAME]
 
     def parse_team_info(self, team_soup):
+        def disgusting_parsing(d):
+            # split record into more key-value pairs
+            record = d['record']
+            d['record'] = record.split(',')[0]
+            d['division_pos'] = record[len(d['record'])+1:].split("in")[0].strip()
+            d['division'] = record.split("\n")[1].strip()
+            # leave d['coach'] alone
+            # split points_for into more key-value pairs
+            pts_for = d['points_for']
+            d['points_for'] = pts_for.split(' ')[0]
+            d['points_for_pg'] = pts_for.split(' ')[1] # parse more for just the for ppg
+            d['points_for_rank'] = pts_for.split(' ')[2]
+            # split points_against into more key-value pairs
+            pts_agnst = d['points_against']
+            d['points_against'] = pts_agnst.split(' ')[0]
+            d['points_against_pg'] = pts_agnst.split(' ')[1] # parse more for just the for ppg
+            d['points_against_rank'] = pts_agnst.split(' ')[2]
+            # split expected_w-l into more key-value pairs
+            ewl = d.pop('expected_w-l')
+            d['expected_w'] = ewl.split('-')[0]
+            d['expected_l'] = ewl.split('-')[1]
+            return d
+
         # Get general team info 
         info_dict = {}
         div = team_soup.find("div", attrs={"data-template":"Partials/Teams/Summary"})
@@ -93,14 +124,16 @@ class Scraper():
             # in order to assign them as class attributes
             title = rec.text.replace(":","").strip().lower().replace(" ","_")
             info = p.text.replace(rec.text,"").strip()
-            
+
             info_dict[title] = info
-        
+
+        info_dict = disgusting_parsing(info_dict)
+        print("INFO DICT", info_dict)
         # TODO: fix up the info_dict. it has ugly strings that need to be
         # seperated into better fields
 
         return info_dict
-        
+
     def parse_team_injury_info(self, team_soup, short_name):
         # Get the team's latest weekly injury report
         injured_players = []
