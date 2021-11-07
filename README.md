@@ -31,3 +31,81 @@ gambler.print_games(this_weeks_games)
 game = this_weeks_games[1]
 gambler.analyze_game(game)
 ```
+
+Example Usage in Interpreter
+```
+In [1]: from nohoilpi import *                                                                                                                                                                             
+
+In [2]: n = Nohoilpi(always_update=True)                                                                                                                                                                   
+
+In [3]: n.initialize()                                                                                                                                                                                     
+[WDM] - 
+
+[WDM] - ====== WebDriver manager ======
+[WDM] - Current google-chrome version is 95.0.4638
+[WDM] - Get LATEST driver version for 95.0.4638
+[WDM] - Driver [/home/neveroot/.wdm/drivers/chromedriver/linux64/95.0.4638.54/chromedriver] found in cache
+
+In [4]: n.get_schedule()                                                                                                                                                                                   
+[-] File not cached. Fetching
+[-] Cached to cached_pages/schedule_cache
+
+In [5]: teams = ['Tampa Bay Buccaneers', 'Dallas Cowboys', 'Philadelphia Eagles']                                                                                                                          
+
+In [6]: teamdatas = n.get_teams(teams)                                                                                                                                                                     
+[-] Going to https://www.pro-football-reference.com/teams/tam/2021.htm
+[-] Scraping the entire team's page for team info
+[-] Data for Tampa Bay Buccaneers was collected and stored
+[-] Going to https://www.pro-football-reference.com/teams/dal/2021.htm
+[-] Scraping the entire team's page for team info
+[-] Data for Dallas Cowboys was collected and stored
+[-] Going to https://www.pro-football-reference.com/teams/phi/2021.htm
+[-] Scraping the entire team's page for team info
+[-] Data for Philadelphia Eagles was collected and stored
+
+In [7]: teamdatas                                                                                                                                                                                          
+Out[7]: 
+{'Tampa Bay Buccaneers': Tampa Bay Buccaneers,
+ 'Dallas Cowboys': Dallas Cowboys,
+ 'Philadelphia Eagles': Philadelphia Eagles}
+
+In [8]: n.week_1                                                                                                                                                                                           
+Out[8]: 
+[Tampa Bay Buccaneers @ Dallas Cowboys,
+ Philadelphia Eagles @ Atlanta Falcons,
+ Carolina Panthers @ New York Jets,
+ Arizona Cardinals @ Tennessee Titans,
+ San Francisco 49ers @ Detroit Lions,
+ Houston Texans @ Jacksonville Jaguars,
+ Pittsburgh Steelers @ Buffalo Bills,
+ Los Angeles Chargers @ Washington Football Team,
+ Cincinnati Bengals @ Minnesota Vikings,
+ Seattle Seahawks @ Indianapolis Colts,
+ Kansas City Chiefs @ Cleveland Browns,
+ New Orleans Saints @ Green Bay Packers,
+ Miami Dolphins @ New England Patriots,
+ Denver Broncos @ New York Giants,
+ Los Angeles Rams @ Chicago Bears,
+ Las Vegas Raiders @ Baltimore Ravens]
+
+
+In [9]: current_week = n.get_games_of_week(CURRENT_WEEK)                                                                                                                                                  
+[-] Today's date: 2021-11-07 11:48AM
+
+In [10]: current_week                                                                                                                                                                                      
+Out[10]: 
+[Indianapolis Colts @ New York Jets,
+ Atlanta Falcons @ New Orleans Saints,
+ New England Patriots @ Carolina Panthers,
+ Cleveland Browns @ Cincinnati Bengals,
+ Houston Texans @ Miami Dolphins,
+ Minnesota Vikings @ Baltimore Ravens,
+ Buffalo Bills @ Jacksonville Jaguars,
+ Las Vegas Raiders @ New York Giants,
+ Denver Broncos @ Dallas Cowboys,
+ Los Angeles Chargers @ Philadelphia Eagles,
+ Arizona Cardinals @ San Francisco 49ers,
+ Green Bay Packers @ Kansas City Chiefs,
+ Tennessee Titans @ Los Angeles Rams,
+ Chicago Bears @ Pittsburgh Steelers]
+```

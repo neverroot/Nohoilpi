@@ -25,10 +25,7 @@ def remove_empty_kvs(d):
     clean = {}
     for k, v in d.items():
         if isinstance(v,dict):
-            print(f"[x] Checking nested dict: {k}")
             v = remove_empty_kvs(v)
         if v:
             clean[k] = v
-        else:
-            print(f"[x] Removing empty {k} key, has '{v}' value ")
     return clean 
