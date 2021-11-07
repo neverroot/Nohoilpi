@@ -51,7 +51,7 @@ class Nohoilpi():
         games_of_week = self.schedule.week(n)
         all_res = []
         for game in games_of_week:
-            res = self.analyze_matchup(game.winner, game.loser)
+            res = self.analyze_game(game.winner, game.loser)
         return all_res
 
     def analzye_teams_last_game(self, full_name, n):
@@ -65,4 +65,4 @@ class Nohoilpi():
     def analyze_game(self, a, b):
         last_a_game = self.analzye_teams_last_game(a,n-1)
         last_b_game = self.analzye_teams_last_game(b,n-1)
-        matchup_stats = self.analzyer.matchup(a,b,last_a_game,last_b_game)
+        matchup_stats = self.analzyer.game(a,b,last_a_game,last_b_game)

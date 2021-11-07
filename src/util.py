@@ -7,6 +7,9 @@ def page_cached(fn):
         return os.stat(fn).st_size > 0
     return False
 
+def get_today():
+    return datetime.date.today()
+
 def get_dt(date_time):
     return datetime.datetime.strptime(date_time, "%Y-%m-%d %I:%M%p")
 
@@ -18,5 +21,14 @@ def get_curr_dt():
 def get_dt_string(dt):
     return dt.strftime("%Y-%m-%d %I:%M%p")
 
-def check_caches(dn):
-    pass
+def remove_empty_kvs(d):
+    clean = {}
+    for k, v in d.items():
+        if isinstance(v,dict):
+            print(f"[x] Checking nested dict: {k}")
+            v = remove_empty_kvs(v)
+        if v:
+            clean[k] = v
+        else:
+            print(f"[x] Removing empty {k} key, has '{v}' value ")
+    return clean 

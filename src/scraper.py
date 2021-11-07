@@ -18,9 +18,20 @@ NUM_OF_WEEKS = 18
 
 class Schedule():
     def __init__(self, games):
+        self.time_fetched = util.get_dt_string(util.get_today())
         self.games = games
         # makes each week an attribute ex. schedule.week_1
         self.__dict__.update(self.get_weeks())
+        self.__dict__ = util.remove_empty_kvs(self.__dict__)
+
+    def __str__(self):
+        res = ""
+        for k,v in self.__dict__.items():
+            if k == 'games':
+                continue
+            else:
+                res += f"{k} : {v}\n"
+        return res
 
     def get_weeks(self):
         weeks = {f'week_{i+1}':[] for i in range(NUM_OF_WEEKS)}
@@ -49,6 +60,16 @@ class Schedule():
 class TeamData():
     def __init__(self, data):
         self.__dict__.update(data)
+        self.__dict__ = util.remove_empty_kvs(self.__dict__)
+
+    def __repr__(self):
+        return self.name
+
+    def __str__(self):
+        res = ""
+        for k,v in self.__dict__.items():
+            res += f"{k} : {v}\n"
+        return res
 
 
 class GameData():
@@ -57,6 +78,12 @@ class GameData():
 
     def __repr__(self):
         return f"{self.winner} @ {self.loser}"
+    
+    def __str__(self):
+        res = ""
+        for k,v in self.__dict__.items():
+            res += f"{k} : {v}\n"
+        return res
 
 
 GET_FULL_NAME  = 0
@@ -75,12 +102,6 @@ class Scraper():
     def initialize(self):
         self.options = Options()
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=self.options)
-
-    # TODO: not finished
-    def get_matchup_week(self):
-        assert(self.next_week_num)
-        assert(self.next_gametime) # run scrape_schedule if thrown
-        ngt = util.get_dt(self.next_gametime)
 
     def name_translate(self, full_name):
         for t in self.teams_tri:
@@ -128,9 +149,6 @@ class Scraper():
             info_dict[title] = info
 
         info_dict = disgusting_parsing(info_dict)
-        print("INFO DICT", info_dict)
-        # TODO: fix up the info_dict. it has ugly strings that need to be
-        # seperated into better fields
 
         return info_dict
 
@@ -195,9 +213,9 @@ class Scraper():
             th_tr_rows = tr.find_all(["th","td"], attrs={"data-stat":True})
             key = ''
             for i, row in enumerate(th_tr_rows):
-                if i == 0:
+                if i == 0: # skip the first col, it's blank
                     continue
-                elif i == 1:
+                elif i == 1: # 2nd col is the key
                     key = row.text
                     stats[row.text] = {}
                 else:
@@ -211,7 +229,8 @@ class Scraper():
 
         if lteams == ['all']:
             target_teams = self.teams_tri
-        # must be a better way to do this
+        # TODO: must be a better way to do this
+        # should we just always work with short_names
         else:
             target_teams = []
             for lt in lteams:
